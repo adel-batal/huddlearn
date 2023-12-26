@@ -5,23 +5,28 @@ import Groups from './views/Groups/Groups'
 import Navbar from './components/Navbar/Navbar'
 import { useState } from 'react';
 import CreateGroupModal from './components/Modals/CreateGroupModal/CreateGroupModal';
+import { Group } from './types/types';
 
 function App() {
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
+  const [currentGroups, setCurrentGroups] = useState(groups);
+
+  const handleCreateGroup = (group: Group) => {
+    setCurrentGroups([...currentGroups, group]);
+  }
   return (
     <>
       <Router>
         <Navbar openCreateGroupModal={() => setIsCreateGroupModalOpen(true)} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/groups" element={<Groups groups={groups}/>} />
+          <Route path="/groups" element={<Groups groups={currentGroups} />} />
         </Routes>
       </Router>
-      <CreateGroupModal isOpen={isCreateGroupModalOpen} onClose={() => setIsCreateGroupModalOpen(false)} />
+      <CreateGroupModal onCreateGroup={handleCreateGroup} isOpen={isCreateGroupModalOpen} onClose={() => setIsCreateGroupModalOpen(false)} />
     </>
   )
 }
-
 // fake group data until we connect to the backend
 const groups = [
   {
@@ -59,41 +64,6 @@ const groups = [
     members: 5,
     image: "https://picsum.photos/200/300"
   },
-  {
-    id: 6,
-    name: "Group 6",
-    description: "This is the sixth group",
-    members: 6,
-    image: "https://picsum.photos/200/300"
-  },
-  {
-    id: 7,
-    name: "Group 7",
-    description: "This is the seventh group",
-    members: 7,
-    image: "https://picsum.photos/200/300"
-  },
-  {
-    id: 8,
-    name: "Group 8",
-    description: "This is the eighth group",
-    members: 8,
-    image: "https://picsum.photos/200/300"
-  },
-  {
-    id: 9,
-    name: "Group 9",
-    description: "This is the ninth group",
-    members: 9,
-    image: "https://picsum.photos/200/300"
-  },
-  {
-    id: 10,
-    name: "Group 10",
-    description: "This is the tenth group",
-    members: 10,
-    image: "https://picsum.photos/200/300"
-  }
 ];
 
 export default App

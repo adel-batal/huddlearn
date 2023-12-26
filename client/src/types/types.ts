@@ -3,11 +3,11 @@ export type NavbarProps = {
 }
 
 export type Group = {
-    id: number;
+    id?: number;
     name: string;
     description: string;
-    image: string;
-    members: number;
+    image?: string;
+    members?: number;
 }
 
 export type GroupsProps = {
