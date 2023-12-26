@@ -1,0 +1,50 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 8rem;
+    background-color: var(--white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--purple);
+    cursor: pointer;
+}
+
+.navLinks {
+    list-style: none;
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+}
+
+.navLink {
+    text-decoration: none;
+    color: var(--blue);
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.cta {
+    text-decoration: none;
+    background-color: rgba(var(--purple-rgb), 1);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.cta:hover {
+    /* Simulate a fadeout effect by reducing the alpha value */
+    background-color: rgba(var(--purple-rgb), 0.9);
+    color: rgba(var(--white-rgb), 0.9);
+}
+
+.navLink:hover {
+    color: rgba(var(--blue-rgb), 0.9);
+}
