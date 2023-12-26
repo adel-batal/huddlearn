@@ -16,10 +16,13 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
     } = styles;
 
     const handleGroupCreateClick = () => {
-        if (group) {
+        if (group?.name && group?.description) {
             props.onCreateGroup(group);
+            setGroup(null);
+            props.onClose();
+        } else {
+            alert("Please enter a group name and description");
         }
-        props.onClose();
     };
 
     const setGroupData = (e: { target: { name: string; value: string; }; }) => {

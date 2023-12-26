@@ -1,4 +1,4 @@
-import ViewContainer from "../../components/viewContainer/ViewContainer";
+import ViewContainer from "../../components/ViewContainer/ViewContainer";
 
 const Home = () => {
     return (

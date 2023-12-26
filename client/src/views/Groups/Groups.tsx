@@ -1,5 +1,5 @@
 import { Group, GroupsProps } from "../../types/types";
-import ViewContainer from "../../components/viewContainer/ViewContainer";
+import ViewContainer from "../../components/ViewContainer/ViewContainer";
 import GroupCard from "../../components/GroupCard/GroupCard";
 import styles from "./Groups.module.css";
 

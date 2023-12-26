@@ -12,7 +12,9 @@ function App() {
   const [currentGroups, setCurrentGroups] = useState(groups);
 
   const handleCreateGroup = (group: Group) => {
-    setCurrentGroups([...currentGroups, group]);
+    if (group) {
+      setCurrentGroups([...currentGroups, { ...group, id: currentGroups.length + 1 }]);
+    }
   }
   return (
     <>
@@ -28,7 +30,7 @@ function App() {
   )
 }
 // fake group data until we connect to the backend
-const groups = [
+const groups: Group[] = [
   {
     id: 1,
     name: "Group 1",
