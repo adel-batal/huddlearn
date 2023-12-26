@@ -1,8 +1,10 @@
+import ViewContainer from "../../components/viewContainer/ViewContainer";
+
 const Home = () => {
     return (
-        <div>
+        <ViewContainer>
             <h1>Home</h1>
-        </div>
+        </ViewContainer>
     );
 };
 

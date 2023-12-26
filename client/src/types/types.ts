@@ -13,3 +13,7 @@ export type Group = {
 export type GroupsProps = {
     groups: Group[];
   };
+
+export type containerComponentProps = {
+    children: React.ReactNode;
+}

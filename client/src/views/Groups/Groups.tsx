@@ -1,15 +1,15 @@
 import { Group, GroupsProps } from "../../types/types";
-
+import ViewContainer from "../../components/viewContainer/ViewContainer";
 const Groups: React.FC<GroupsProps> = ({ groups }) => {
     return (
-        <div>
+        <ViewContainer>
             <h1>Groups</h1>
-            <ul>
+            <div>
                 {groups.map((group: Group) => (
-                    <li key={group.id}>{group.name}</li>
+                    <span key={group.id}>{group.name}</span>
                 ))}
-            </ul>
-        </div>
+            </div>
+        </ViewContainer>
     );
 };
 
