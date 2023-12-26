@@ -14,6 +14,6 @@ export type GroupsProps = {
     groups: Group[];
   };
 
-export type containerComponentProps = {
+export type ContainerComponentProps = {
     children: React.ReactNode;
 }

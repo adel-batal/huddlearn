@@ -1,7 +1,7 @@
 import React from "react"
-import { containerComponentProps } from "../../types/types"
+import { ContainerComponentProps } from "../../types/types"
 import styles from "./ViewContainer.module.css"
-const ViewContainer: React.FC<containerComponentProps> = ({ children }) => {
+const ViewContainer: React.FC<ContainerComponentProps> = ({ children }) => {
     return (
         <div className={styles.viewContainer}>
             {children}
