@@ -17,3 +17,7 @@ export type GroupsProps = {
 export type ContainerComponentProps = {
     children: React.ReactNode;
 }
+
+export type GroupCardProps = {
+    group: Group;
+}
