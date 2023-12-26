@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styles from './BaseModal.module.css';
-import { ModalProps } from '../../types/modal';
+import { ModalProps } from '../../../types/modal';
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;

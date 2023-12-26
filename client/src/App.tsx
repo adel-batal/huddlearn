@@ -4,7 +4,7 @@ import Home from './views/Home/Home'
 import Groups from './views/Groups/Groups'
 import Navbar from './components/Navbar/Navbar'
 import { useState } from 'react';
-import CreateGroupModal from './components/Modals/CreateGroupModal';
+import CreateGroupModal from './components/Modals/CreateGroupModal/CreateGroupModal';
 
 function App() {
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
