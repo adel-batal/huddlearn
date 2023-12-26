@@ -3,7 +3,7 @@ import ViewContainer from "../../components/viewContainer/ViewContainer";
 const Home = () => {
     return (
         <ViewContainer>
-            <h1>Hom  e</h1>
+            <h1>Home</h1>
         </ViewContainer>
     );
 };
