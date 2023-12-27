@@ -4,7 +4,11 @@ import styles from './GroupCard.module.css'
 const GroupCard: React.FC<GroupCardProps> = ({ group }) => {
     return (
         <div className={styles.cardContainer}>
-            <img className={styles.cardImage} src={group.image} alt={group.name} />
+            <img
+                className={styles.cardImage}
+                src={group.image}
+                alt={group.name}
+            />
             <div className={styles.cardInfo}>
                 <span>{group.name}</span>
                 <span>{group.description}</span>

@@ -39,15 +39,34 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
                     <h1>Create New Group</h1>
                     <div className={inputRow}>
                         <span>Group name</span>
-                        <input name='name' type="text" placeholder="Awesome group" onChange={setGroupData} />
+                        <input
+                            name='name'
+                            type="text" placeholder="Awesome group"
+                            onChange={setGroupData}
+                        />
                     </div>
                     <div className={inputRow}>
                         <span>Group description</span>
-                        <input name='description' type="text" placeholder="My group description" onChange={setGroupData} />
+                        <input
+                            name='description'
+                            type="text"
+                            placeholder="My group description"
+                            onChange={setGroupData}
+                        />
                     </div>
                     <div className={modalActions}>
-                        <button className={`${actionButton} ${createButton}`} onClick={handleGroupCreateClick}>Create Group</button>
-                        <button className={`${actionButton} ${cancelButton}`} onClick={props.onClose}>Cancel</button>
+                        <button
+                            className={`${actionButton} ${createButton}`}
+                            onClick={handleGroupCreateClick}
+                        >
+                            Create Group
+                        </button>
+                        <button
+                            className={`${actionButton} ${cancelButton}`}
+                            onClick={props.onClose}
+                        >
+                            Cancel
+                        </button>
                     </div>
                 </div>
             </BaseModal>
