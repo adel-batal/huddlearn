@@ -24,7 +24,7 @@ pip install django
 pip install djangorestframework
 pip install djangorestframework-jwt
 ```
-2. Install PostgreSQL to localhost:5432, make a database huddledb
+2. Install PostgreSQL 15 to localhost:5432, make a database huddledb
 
 3. In SQL run:
 ```
