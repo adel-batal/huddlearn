@@ -12,26 +12,31 @@ You can use GET POST PATCH, to list, add and modify this entities
 4. huddleusers
 
 Complete CRUD endpoints, JSON:
+```
 /skills/
 /studygroups/
 /projectgroups/
 /huddleusers/
-
+```
 (See huddleapi/models.py for fields names)
 
 Additional:
-JSON: { "user_id": <HuddleUserID> }
+JSON: ```{ "user_id": <HuddleUserID> }```
+
+```
 /studygroups/<GroupID>/add_member/
 /studygroups/<GroupID>/remove_member/
 /projectgroups/<GroupID>/add_member/
 /projectgroups/<GroupID>/remove_member/
+```
+
+
+by default they all will be assetpible through:
+```localhost:8008/```
 
 
 
-
-
-
-There is a also HUDDLE.postman_collection.json for POSTMAN working
+There is a also ```HUDDLE.postman_collection.json``` collection for POSTMAN working
 You can use it
 
 
@@ -42,7 +47,7 @@ Back-end works on Python 10 + Django + Django REST freamwork + Postgre SQL 15
 
 ## Download and run [PostgreSQL 15](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) installer version 15.5 
 Use default setting, adress: localhost and port 5432. Remember your superuser name (postgres) and password.
-After install run "pgAdmin 4" from the package, login with password. Expand from drop-down Servers>PostgreSQL>Databases
+After install run ```pgAdmin4``` from the package, login with password. Expand from drop-down Servers>PostgreSQL>Databases
 With right click open menu and select Create Database
 
 ![img.png](img.png)
