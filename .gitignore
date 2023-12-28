@@ -13,6 +13,7 @@
 .gitattributes
 package.json
 yarn.lock
+.idea
 
 #!.yarn/cache
 .pnp.*
