@@ -47,7 +47,8 @@ python manage.py migrate
 
 5. Make a Django admin superuser
 6. Run Django console 
-```python manage.py shell
+```
+python manage.py shell
 ```
 and run
 ```
@@ -72,8 +73,10 @@ python manage.py runserver
 
 1. add skills additions
 
+2. PICTURES! 
+
 3. in the add users check if user is not in group
 4. remove user - check if user creator - prohibit
     if user in coordinators - remove from there
 
-5. a lot of staff
+5. in the future it may requre a lots of stuff
