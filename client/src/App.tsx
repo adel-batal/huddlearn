@@ -35,16 +35,17 @@ function App() {
   // };
 
 
-  // temporary code until we have proper authentication and state management
   useEffect(() => {
     setLoggedInUser(currentUser);
-    setMyGroups(groups.filter(group => group.owner === currentUser?.id));
-
+    setCurrentGroups(groups);
+    setMyGroups(currentGroups.filter(group => group.owner === currentUser?.id));
   }, [])
+
 
   const handleCreateGroup = (group: GroupType) => {
     if (group) {
       setCurrentGroups([...currentGroups, { ...group, id: currentGroups.length + 1 }]);
+      setMyGroups([...myGroups, { ...group, id: currentGroups.length + 1 }]);
     }
   }
 
@@ -52,21 +53,30 @@ function App() {
   const handleEditGroup = (id: string | undefined) => {
     if (!id) return
     setIsInEditMode(true);
-    setGroupToEdit(myGroups.find(group => group.id === id) || null);
+    setGroupToEdit(currentGroups.find(group => group.id === id) || null);
     setIsCreateGroupModalOpen(true);
   }
 
   const editGroup = (group: GroupType) => {
     if (!group) return
-    const groupToEdit = myGroups.find(groupData => groupData.id === group.id);
+    const groupToEdit = currentGroups.find(groupData => groupData.id === group.id);
     if (!groupToEdit) return
-    const updatedGroups = myGroups.map(groupData => {
+    const updatedGroups = currentGroups.map(groupData => {
       if (groupData.id === group.id) {
         return group;
       }
       return groupData;
     });
-    setMyGroups(updatedGroups);
+    setCurrentGroups(updatedGroups);
+    setMyGroups(prevMyGroups => {
+      const updatedMyGroups = prevMyGroups.map(groupData => {
+        if (groupData.id === group.id) {
+          return group;
+        }
+        return groupData;
+      });
+      return updatedMyGroups;
+    });
   }
 
   const handleRequestJoinGroup = (id: string | undefined) => {

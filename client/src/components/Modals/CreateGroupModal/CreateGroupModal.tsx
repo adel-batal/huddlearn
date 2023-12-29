@@ -87,7 +87,7 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
                         className={`${actionButton} ${createButton} ${group?.name && group?.description && group?.type ? '' : 'disabled'}`}
                         onClick={handleGroupCreateClick}
                     >
-                        Create Group
+                        {props.isInEditMode ? 'Edit' : 'Create'} Group
                     </button>
                     <button
                         className={`${actionButton} ${cancelButton}`}
