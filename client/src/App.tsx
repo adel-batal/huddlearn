@@ -24,7 +24,7 @@ function App() {
 
   const fetchGroups = async () => {
     try {
-      const response = await axios.get('studygroups', {
+      const response = await axios.get(`${API}/studygroups`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
         },
