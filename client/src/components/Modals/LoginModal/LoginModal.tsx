@@ -5,7 +5,7 @@ import styles from './LoginModal.module.css';
 import { useState } from 'react';
 import { LoginModalProps } from '../../../types/modal';
 const LoginModal: React.FC<LoginModalProps> = props => {
-    const [loginData, setLoginData] = useState<UserLogin>({ email: '', password: '' });
+    const [loginData, setLoginData] = useState<UserLogin>({ name: '', password: '' });
     const {
         contentContainer,
         inputRow,
@@ -18,11 +18,11 @@ const LoginModal: React.FC<LoginModalProps> = props => {
 
 
     const handleLoginClick = () => {
-        if (loginData?.email && loginData?.password) {
+        if (loginData?.name && loginData?.password) {
             props.onLogin(loginData);
             handleClose();
         } else {
-            alert("Please enter your email and password");
+            alert("Please enter your username and password");
         }
     }
     const handleLoginDataChange = (e: { target: { name: string; value: string; }; }) => {
@@ -33,7 +33,7 @@ const LoginModal: React.FC<LoginModalProps> = props => {
     }
 
     const handleClose = () => {
-        setLoginData({ email: '', password: '' });
+        setLoginData({ name: '', password: '' });
         props.onClose();
     }
 
@@ -42,10 +42,10 @@ const LoginModal: React.FC<LoginModalProps> = props => {
             <div className={contentContainer}>
                 <h1>Login</h1>
                 <div className={inputRow}>
-                    <span>Email</span>
+                    <span>username</span>
                     <input
-                        name='email'
-                        type="text" placeholder="me@example.com"
+                        name='name'
+                        type="text" placeholder="john"
                         onChange={handleLoginDataChange}
                     />
                 </div>
