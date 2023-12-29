@@ -29,7 +29,7 @@ const GroupCard: React.FC<GroupCardProps> = ({ group, currentUserIsOwner, delete
             <div className={styles.cardContainer}>
                 <img
                     className={styles.cardImage}
-                    src={group.image}
+                    src={group?.picture || group?.image || ''}
                     alt={group.name}
                 />
                 <div className={styles.cardInfo}>

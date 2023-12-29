@@ -11,6 +11,7 @@ export type Group = {
     name: string;
     description: string;
     image?: string;
+    picture?: string;
     members?: number;
     type?: string;
     creator: string;
