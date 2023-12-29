@@ -15,6 +15,7 @@ function App() {
   const [currentGroups, setCurrentGroups] = useState(groups);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [myGroups, setMyGroups] = useState<GroupType[]>([]); // groups that the user is a member of
   const loggedInUser = {
     id: '1',
     name: 'John Doe',
@@ -39,6 +40,9 @@ function App() {
 
     const customWindow = window as unknown as CustomWindow;
     customWindow.owner = '1';
+
+    setMyGroups(groups.filter(group => group.owner === customWindow.owner));
+
   }, [])
 
   const handleCreateGroup = (group: GroupType) => {
@@ -78,15 +82,21 @@ function App() {
           loggedInUser={null}
         />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home
+            groups={myGroups}
+            handleEditGroup={handleEditGroup}
+            handleRequestJoinGroup={handleRequestJoinGroup}
+            handleDeleteGroup={handleDeleteGroup}
+          />
+          } />
           <Route path="/groups" element={<Groups
+            title="All Groups"
             groups={currentGroups}
             handleEditGroup={handleEditGroup}
             handleRequestJoinGroup={handleRequestJoinGroup}
             handleDeleteGroup={handleDeleteGroup}
           />
-          }
-          />
+          } />
           <Route path="/groups/:id" Component={Group} />
         </Routes>
       </Router>

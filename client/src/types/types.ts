@@ -17,6 +17,7 @@ export type Group = {
 
 export type GroupsProps = {
     groups: Group[];
+    title: string;
     handleEditGroup: (id: string) => void;
     handleDeleteGroup: (id: string) => void;
     handleRequestJoinGroup: (id: string) => void;
