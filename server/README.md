@@ -11,31 +11,141 @@ You can use GET POST PATCH, to list, add and modify this entities
 3. projectgroups
 4. huddleusers
 
-Complete CRUD endpoints, JSON:
+## Authorisation
+
+Successful action of registration or login responses with JSON with tokens like
+```
+{
+    "refresh": "eyJhbGciOiJIU.....",
+    "access": "eyJhbGciOiJIU...."
+{
+```
+```access``` is the access token, you should use ```"JWT "+response.access``` in the Authorisation header field of all your request
+
+
+### Registration
+```
+auth/register/
+```
+JSON:
+```
+{
+    "username": "Your name",
+    "password": "your pass",
+    "email": "myemail@some.com"
+}
+```
+
+It will create ad DB field with this user, 
+and also create a HuddleUser instance connected to this User
+
+all enties will use this HuddleUser instance ID to members, creator, coordinators list fields, so be careful
+
+### Login
+```
+/auth/login/
+```
+JSON:
+```
+{
+    "username": "Your name",
+    "password": "your pass",
+}
+```
+
+
+## Complete CRUD endpoints, JSON:
+### by default, the base url is: ```localhost:8008/```
+
 ```
 /skills/
 /studygroups/
 /projectgroups/
 /huddleusers/
 ```
+JSON example for POST ```studygroups/```:
+```
+{
+    "name":"New group",
+    "description":"Emerald guitar sound fantasy"
+}
+```
+
+
+### Use GET, POST, PUT, PATCH, DELETE to
+```
+/skills/<skill_id>/
+/studygroups/<studygroup_id>/
+/projectgroups/<projectgroup_id>/
+/huddleusers/<huddleuser_id>/
+```
+JSON example for PATCH ```studygroups/10/```:
+```
+{
+    "description":"New description"
+}
+```
+
+
+
+
 (See huddleapi/models.py for fields names)
 
-Additional:
+You are getting JSON in response
+
+## Adding and removing members of the group:
 JSON: ```{ "user_id": <HuddleUserID> }```
+```
+/studygroups/<studygroup_id>/add_member/
+/studygroups/<studygroup_id>/remove_member/
+/projectgroups/<projectgroup_id>/add_member/
+/projectgroups/<projectgroup_id>/remove_member/
+```
+*Logic*: With all check (if such user by user_id exists, if he is not alredy in the group), 
+if requesting user (by token) is creator or coordinator of the group user will be added to memeber, if not - to 
+```request_users``` field. 
+For removing - you cannot remove coordinator, user can remove himself, you must be creator or coordinator to remove other users,
+if users is in the ```request_users``` field this action removes him
+
+## Skills
+for this endpoints:
+```
+/studygroups/<studygroup_id>/
+/projectgroups/<projectgroup_id>/
+/huddleusers/<huddleuser_id>/
+```
+use actions 
+```
+/add_skill/
+/remove_skill/
+```
+JSON: ```{ "skill_id": <SkillID> }```
+
+Only user may modify his skills list, only creator or coordinator may modify group skills
+Examples:
+```
+/studygroups/6/add_skill/
+/projectgroups/9/remove_skill/
+/huddleusers/4/add_skill/
+/projectgroups/9/remove_skill/
+```
+
+*Logic* will check if skill exist, you cannot add skill allready added, and cannot remove missing skill
+
+## Filtering
+
+```studygroups``` and ```projectgroups``` and be filtered by skill. If you provide multiple skills, AND logic is used
+Filtering is done by Skill ID field. So you should have groups with filled up skills and can filter by skills
+examples:
+```
+/studygroups/?skills=1
+/studygroups/?skills=2&skills=3
+/projectgroups/?skills=3
 
 ```
-/studygroups/<GroupID>/add_member/
-/studygroups/<GroupID>/remove_member/
-/projectgroups/<GroupID>/add_member/
-/projectgroups/<GroupID>/remove_member/
-```
 
 
-by default they all will be assetpible through:
-```localhost:8008/```
-
-
-
+# POSTMAN
 There is a also ```HUDDLE.postman_collection.json``` collection for POSTMAN working
 You can use it
 
@@ -96,6 +206,8 @@ python -m venv venv
 pip install django
 pip install djangorestframework
 pip install djangorestframework-jwt
+pip install django-filter
+
 ```
 
 And run this to enter virtual environment:
@@ -147,10 +259,6 @@ Have fun
 
 1. add skills additions
 
-2. PICTURES! 
+2. PICTURES
 
-3. in the add users check if user is not in group
-4. remove user - check if user creator - prohibit
-    if user in coordinators - remove from there
-
-5. in the future it may requre a lots of stuff
+// 5. in the future it may requre a lots of stuff

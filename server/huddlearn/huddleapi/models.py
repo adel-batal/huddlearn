@@ -39,7 +39,7 @@ class StudyGroup(models.Model):
     coordinators = models.ManyToManyField('HuddleUser', related_name='study_groups_coordinated')
     users_requests = models.ManyToManyField('HuddleUser', related_name='study_group_requested', blank=True)
     chat = models.OneToOneField(Chat, on_delete=models.SET_NULL, null=True)
-    skill = models.ForeignKey(Skill, on_delete=models.SET_NULL, related_name='study_groups', null=True)
+    skills = models.ManyToManyField(Skill, related_name='study_groups', blank=True)
     level = models.CharField(max_length=255, null=True, blank=True)
     resources = models.JSONField(null=True)
 

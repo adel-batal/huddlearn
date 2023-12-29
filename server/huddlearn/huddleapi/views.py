@@ -1,5 +1,5 @@
 # from rest_framework_simplejwt.authentication import JWTAuthentication
-from .permissions import IsOwnerOrReadOnly, IsCoordinatorOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsUserOrReadOnly
 from rest_framework import generics
 from rest_framework import permissions, viewsets
 from rest_framework import status
@@ -12,7 +12,10 @@ from django.db import transaction
 
 from .models import HuddleUser, Skill, StudyGroup, ProjectGroup, Chat
 from .serializers import HuddleUserSerializer, StudyGroupSerializer, ProjectGroupSerializer, SkillSerializer, \
-    StudyGroupMembershipSerializer, ProjectGroupMembershipSerializer, UserSerializer
+    StudyGroupMembershipSerializer, ProjectGroupMembershipSerializer, UserSerializer, SkillListSerializer
+
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import StudyGroupFilter, ProjectGroupFilter
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -45,7 +48,56 @@ class HuddleUserViewSet(viewsets.ModelViewSet):
     """
     queryset = HuddleUser.objects.all().order_by('user__date_joined')
     serializer_class = HuddleUserSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsUserOrReadOnly])
+    def add_skill(self, request, pk=None):
+        huddleuser = self.get_object()
+        # request_huddleuser = HuddleUser.objects.get(user=self.request.user)
+        serializer = SkillListSerializer(data=request.data)
+
+        if serializer.is_valid():
+            skill_id = serializer.validated_data['skill_id']
+            try:
+                skill = Skill.objects.get(pk=skill_id)
+            except:
+                return Response({'message': f'Skill ID {skill_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if huddleuser.skills.filter(id=skill.id).exists():
+                return Response({'message': 'Skill already assigned to user'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            # Add the user to the group's members
+            huddleuser.skills.add(skill)
+            huddleuser.save()
+            return Response({'message': 'Skill added to user successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsUserOrReadOnly])
+    def remove_skill(self, request, pk=None):
+        huddleuser = self.get_object()
+        # request_huddleuser = HuddleUser.objects.get(user=self.request.user)
+        serializer = SkillListSerializer(data=request.data)
+
+        if serializer.is_valid():
+            skill_id = serializer.validated_data['skill_id']
+            try:
+                skill = Skill.objects.get(pk=skill_id)
+            except:
+                return Response({'message': f'Skill ID {skill_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if not huddleuser.skills.filter(id=skill.id).exists():
+                return Response({'message': 'Skill cannot be removed, because it is not assigned to user'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            huddleuser.skills.remove(skill)
+            huddleuser.save()
+            return Response({'message': 'Skill removed from user successfully'}, status=status.HTTP_200_OK)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 class SkillViewSet(viewsets.ModelViewSet):
@@ -72,7 +124,10 @@ class StudyGroupViewSet(viewsets.ModelViewSet):
 
     queryset = StudyGroup.objects.all().order_by('name')
     serializer_class = StudyGroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsCoordinatorOrReadOnly]
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = StudyGroupFilter
 
     @transaction.atomic
     def perform_create(self, serializer):
@@ -84,46 +139,139 @@ class StudyGroupViewSet(viewsets.ModelViewSet):
         # Add the creator to the list of members and coordinators
         instance.members.add(creator_default_value)
         instance.coordinators.add(creator_default_value)
-        group_chat=Chat.objects.create()
-        instance.chat=group_chat
+        group_chat = Chat.objects.create()
+        instance.chat = group_chat
         instance.save()
-
 
         # serializer.save(creator=self.request.user)
 
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly])
     def add_member(self, request, pk=None):
         group = self.get_object()
+        request_huddleuser = HuddleUser.objects.get(user=self.request.user)
         serializer = StudyGroupMembershipSerializer(data=request.data)
 
         if serializer.is_valid():
             user_id = serializer.validated_data['user_id']
-            user = HuddleUser.objects.get(pk=user_id)
+            try:
+                user_to_add = HuddleUser.objects.get(pk=user_id)
+            except:
+                return Response({'message': f'Huddleuser with ID {user_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if group.members.filter(id=user_to_add.id).exists():
+                return Response({'message': 'User allready a member of the group'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if (group.creator == request_huddleuser) or (
+                    group.coordinators.filter(id=request_huddleuser.id).exists()):
+                # Add the user to the group's members
+                group.members.add(user_to_add)
+                group.save()
+                return Response({'message': 'User added to group successfully'}, status=status.HTTP_201_CREATED)
+            else:
+                if group.users_requests.filter(id=user_to_add.id).exists():
+                    return Response(
+                        {'message': 'You can only add user to request list, but this user is already in it'},
+                        status=status.HTTP_400_BAD_REQUEST)
+                group.users_requests.add(user_to_add)
+                group.save()
+                return Response({'message':
+                                     'You can only add user to request list, User was added to request list successfully'},
+                                status=status.HTTP_201_CREATED)
 
-            # Add the user to the group's members
-            group.members.add(user)
-            group.save()
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({'message': 'User added to group successfully'}, status=status.HTTP_201_CREATED)
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly])
+    def remove_member(self, request, pk=None):
+        group = self.get_object()
+        request_huddleuser = HuddleUser.objects.get(user=self.request.user)
+        serializer = StudyGroupMembershipSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user_id = serializer.validated_data['user_id']
+            try:
+                user_to_del = HuddleUser.objects.get(pk=user_id)
+            except:
+                return Response({'message': f'Huddleuser with ID {user_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if (user_to_del == group.creator):
+                return Response({'message': 'Group creator cannot be removed from group'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if (user_to_del == request_huddleuser) or \
+                    (group.creator == request_huddleuser) or \
+                    (group.coordinators.filter(id=request_huddleuser.id).exists()):
+                if group.members.filter(id=user_to_del.id).exists():
+                    # Remove the user from the group's members
+                    group.members.remove(user_to_del)
+                    if group.coordinators.filter(id=user_to_del.id).exists():
+                        group.coordinators.remove(user_to_del)
+
+                    group.save()
+
+                    return Response({'message': 'User removed from group successfully'}, status=status.HTTP_200_OK)
+                else:
+                    if group.users_requests.filter(id=user_to_del.id).exists():
+                        group.users_requests.remove(user_to_del)
+                        group.save()
+                        return Response(
+                            {'message': 'User was in the request list, and was removed from it'},
+                            status=status.HTTP_200_OK)
+                    return Response({'message': 'User is not a member of the group'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'You don`t have required permissions'},
+                                status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
-    def remove_member(self, request, pk=None):
+    def add_skill(self, request, pk=None):
         group = self.get_object()
-        serializer = StudyGroupMembershipSerializer(data=request.data)
+        # request_huddlexuser = HuddleUser.objects.get(user=self.request.user)
+        serializer = SkillListSerializer(data=request.data)
 
         if serializer.is_valid():
-            user_id = serializer.validated_data['user_id']
-            user = HuddleUser.objects.get(pk=user_id)
+            skill_id = serializer.validated_data['skill_id']
+            try:
+                skill = Skill.objects.get(pk=skill_id)
+            except:
+                return Response({'message': f'Skill ID {skill_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if group.skills.filter(id=skill.id).exists():
+                return Response({'message': 'Skill already assigned to group'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
-            # Remove the user from the group's members
-            group.members.remove(user)
+            # Add the user to the group's members
+            group.skills.add(skill)
             group.save()
-
-            return Response({'message': 'User removed from group successfully'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Skill added to group successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
+    def remove_skill(self, request, pk=None):
+        group = self.get_object()
+        # request_huddleuser = HuddleUser.objects.get(user=self.request.user)
+        serializer = SkillListSerializer(data=request.data)
+
+        if serializer.is_valid():
+            skill_id = serializer.validated_data['skill_id']
+            try:
+                skill = Skill.objects.get(pk=skill_id)
+            except:
+                return Response({'message': f'Skill ID {skill_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if not group.skills.filter(id=skill.id).exists():
+                return Response({'message': 'Skill cannot be removed, because it is not assigned to group'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            group.skills.remove(skill)
+            group.save()
+            return Response({'message': 'Skill removed from group successfully'}, status=status.HTTP_200_OK)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -136,6 +284,10 @@ class ProjectGroupViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectGroupSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProjectGroupFilter
+
+
     @transaction.atomic
     def perform_create(self, serializer):
         creator_default_value = HuddleUser.objects.get(user=self.request.user)
@@ -146,42 +298,134 @@ class ProjectGroupViewSet(viewsets.ModelViewSet):
         # Add the creator to the list of members and coordinators
         instance.members.add(creator_default_value)
         instance.coordinators.add(creator_default_value)
-        group_chat=Chat.objects.create()
-        instance.chat=group_chat
+        group_chat = Chat.objects.create()
+        instance.chat = group_chat
         instance.save()
 
-
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly])
     def add_member(self, request, pk=None):
         group = self.get_object()
+        request_huddleuser = HuddleUser.objects.get(user=self.request.user)
         serializer = ProjectGroupMembershipSerializer(data=request.data)
 
         if serializer.is_valid():
             user_id = serializer.validated_data['user_id']
-            user = HuddleUser.objects.get(pk=user_id)
+            try:
+                user_to_add = HuddleUser.objects.get(pk=user_id)
+            except:
+                return Response({'message': f'Huddleuser with ID {user_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if group.members.filter(id=user_to_add.id).exists():
+                return Response({'message': 'User allready a member of the group'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if (group.creator == request_huddleuser) or (
+                    group.coordinators.filter(id=request_huddleuser.id).exists()):
+                # Add the user to the group's members
+                group.members.add(user_to_add)
+                group.save()
+                return Response({'message': 'User added to group successfully'}, status=status.HTTP_201_CREATED)
+            else:
+                if group.users_requests.filter(id=user_to_add.id).exists():
+                    return Response(
+                        {'message': 'You can only add user to request list, but this user is already in it'},
+                        status=status.HTTP_400_BAD_REQUEST)
+                group.users_requests.add(user_to_add)
+                group.save()
+                return Response({'message':
+                                     'You can only add user to request list, User was added to request list successfully'},
+                                status=status.HTTP_201_CREATED)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly])
+    def remove_member(self, request, pk=None):
+        group = self.get_object()
+        request_huddleuser = HuddleUser.objects.get(user=self.request.user)
+        serializer = ProjectGroupMembershipSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user_id = serializer.validated_data['user_id']
+            try:
+                user_to_del = HuddleUser.objects.get(pk=user_id)
+            except:
+                return Response({'message': f'Huddleuser with ID {user_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if (user_to_del == group.creator):
+                return Response({'message': 'Group creator cannot be removed from group'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if (user_to_del == request_huddleuser) or \
+                    (group.creator == request_huddleuser) or \
+                    (group.coordinators.filter(id=request_huddleuser.id).exists()):
+                if group.members.filter(id=user_to_del.id).exists():
+                    # Remove the user from the group's members
+                    group.members.remove(user_to_del)
+                    if group.coordinators.filter(id=user_to_del.id).exists():
+                        group.coordinators.remove(user_to_del)
+
+                    group.save()
+
+                    return Response({'message': 'User removed from group successfully'}, status=status.HTTP_200_OK)
+                else:
+                    if group.users_requests.filter(id=user_to_del.id).exists():
+                        group.users_requests.remove(user_to_del)
+                        group.save()
+                        return Response(
+                            {'message': 'User was in the request list, and was removed from it'},
+                            status=status.HTTP_200_OK)
+                    return Response({'message': 'User is not a member of the group'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'You don`t have required permissions'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
+    def add_skill(self, request, pk=None):
+        group = self.get_object()
+        # request_huddlexuser = HuddleUser.objects.get(user=self.request.user)
+        serializer = SkillListSerializer(data=request.data)
+
+        if serializer.is_valid():
+            skill_id = serializer.validated_data['skill_id']
+            try:
+                skill = Skill.objects.get(pk=skill_id)
+            except:
+                return Response({'message': f'Skill ID {skill_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if group.skills.filter(id=skill.id).exists():
+                return Response({'message': 'Skill already assigned to group'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
             # Add the user to the group's members
-            group.members.add(user)
+            group.skills.add(skill)
             group.save()
-
-            return Response({'message': 'User added to group successfully'}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Skill added to group successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
-    def remove_member(self, request, pk=None):
+    def remove_skill(self, request, pk=None):
         group = self.get_object()
-        serializer = ProjectGroupMembershipSerializer(data=request.data)
+        # request_huddleuser = HuddleUser.objects.get(user=self.request.user)
+        serializer = SkillListSerializer(data=request.data)
 
         if serializer.is_valid():
-            user_id = serializer.validated_data['user_id']
-            user = HuddleUser.objects.get(pk=user_id)
-
-            # Remove the user from the group's members
-            group.members.remove(user)
+            skill_id = serializer.validated_data['skill_id']
+            try:
+                skill = Skill.objects.get(pk=skill_id)
+            except:
+                return Response({'message': f'Skill ID {skill_id} don`t exist'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            if not group.skills.filter(id=skill.id).exists():
+                return Response({'message': 'Skill cannot be removed, because it is not assigned to group'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            group.skills.remove(skill)
             group.save()
+            return Response({'message': 'Skill removed from group successfully'}, status=status.HTTP_200_OK)
 
-            return Response({'message': 'User removed from group successfully'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

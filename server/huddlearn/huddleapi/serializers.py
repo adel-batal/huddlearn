@@ -14,6 +14,12 @@ class HuddleUserSerializer(serializers.ModelSerializer):
         model = HuddleUser
         fields = '__all__'
 
+class SkillListSerializer(serializers.Serializer):
+    skill_id = serializers.IntegerField()  # Assuming user_id is sent in the request
+
+
+
+
 
 class SkillSerializer(serializers.ModelSerializer):
     # creator=serializers.HyperlinkedIdentityField(view_name='HuddleUserViewSet', format='html', read_only=True)
@@ -30,6 +36,7 @@ class StudyGroupSerializer(serializers.ModelSerializer):
             'members': {'required': False},
             'coordinators': {'required': False},
             'users_requests': {'required': False},
+            'skills': {'required': False},
             'chat':{'required': False}
         }
 
