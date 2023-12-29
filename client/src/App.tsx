@@ -43,9 +43,10 @@ function App() {
 
 
   const handleCreateGroup = (group: GroupType) => {
+    const newGroup = { ...group, owner: loggedInUser?.id };
     if (group) {
-      setCurrentGroups([...currentGroups, { ...group, id: currentGroups.length + 1 }]);
-      setMyGroups([...myGroups, { ...group, id: currentGroups.length + 1 }]);
+      setCurrentGroups([...currentGroups, { ...newGroup, id: currentGroups.length + 1 }]);
+      setMyGroups([...myGroups, { ...newGroup, id: currentGroups.length + 1 }]);
     }
   }
 
@@ -85,7 +86,8 @@ function App() {
   }
   const handleDeleteGroup = (id: string | undefined) => {
     if (!id) return
-    console.log('Delete group with id:', id);
+    setCurrentGroups(currentGroups.filter(group => group.id !== id));
+    setMyGroups(myGroups.filter(group => group.id !== id));
   }
   const handleLogin = () => {
     console.log('Login');
