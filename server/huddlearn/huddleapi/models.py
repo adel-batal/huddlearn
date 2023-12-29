@@ -6,7 +6,8 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
-
+from django.dispatch import receiver
+from django.db.models.signals import pre_delete
 
 class Skill(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -18,7 +19,11 @@ class Skill(models.Model):
     def related_groups(self) -> ['StudyGroup']:
         # Your method implementation here
         pass
-
+@receiver(pre_delete, sender=Skill)
+def skill_pre_delete(sender, instance, **kwargs):
+        # Delete the associated file if it exists
+        if instance.picture:
+            instance.picture.delete(False)
 
 class Chat(models.Model):
     reserved = models.TextField(null=True)
@@ -35,8 +40,8 @@ class StudyGroup(models.Model):
     description = models.TextField(null=True, blank=True)
     social_networks_links = models.JSONField(null=True)
     creator = models.ForeignKey('HuddleUser', on_delete=models.SET_NULL, null=True, related_name='created_study_groups')
-    members = models.ManyToManyField('HuddleUser', related_name='study_groups')
-    coordinators = models.ManyToManyField('HuddleUser', related_name='study_groups_coordinated')
+    members = models.ManyToManyField('HuddleUser', related_name='study_groups', blank=True)
+    coordinators = models.ManyToManyField('HuddleUser', related_name='study_groups_coordinated', blank=True)
     users_requests = models.ManyToManyField('HuddleUser', related_name='study_group_requested', blank=True)
     chat = models.OneToOneField(Chat, on_delete=models.SET_NULL, null=True)
     skills = models.ManyToManyField(Skill, related_name='study_groups', blank=True)
@@ -59,6 +64,12 @@ class StudyGroup(models.Model):
         # Your method implementation here
         pass
 
+@receiver(pre_delete, sender=StudyGroup)
+def skill_pre_delete(sender, instance, **kwargs):
+        # Delete the associated file if it exists
+        if instance.picture:
+            instance.picture.delete(False)
+
 
 class ProjectGroup(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -68,8 +79,8 @@ class ProjectGroup(models.Model):
     social_networks_links = models.JSONField(null=True)
     creator = models.ForeignKey('HuddleUser', on_delete=models.SET_NULL, null=True,
                                 related_name='created_project_groups')
-    members = models.ManyToManyField('HuddleUser', related_name='project_groups')
-    coordinators = models.ManyToManyField('HuddleUser', related_name='project_groups_coordinated')
+    members = models.ManyToManyField('HuddleUser', related_name='project_groups', blank=True)
+    coordinators = models.ManyToManyField('HuddleUser', related_name='project_groups_coordinated', blank=True)
     users_requests = models.ManyToManyField('HuddleUser', related_name='project_group_requested',blank=True)
     chat = models.OneToOneField(Chat, on_delete=models.SET_NULL, null=True)
     active_project = models.ForeignKey('Project', on_delete=models.SET_NULL, null=True, related_name='project_group')
@@ -105,6 +116,12 @@ class ProjectGroup(models.Model):
         # Your method implementation here
         pass
 
+@receiver(pre_delete, sender=ProjectGroup)
+def skill_pre_delete(sender, instance, **kwargs):
+        # Delete the associated file if it exists
+        if instance.picture:
+            instance.picture.delete(False)
+
 
 class Project(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -130,6 +147,12 @@ class Project(models.Model):
     def update_stage(self, new_stage: str):
         # Your method implementation here
         pass
+@receiver(pre_delete, sender=Project)
+def skill_pre_delete(sender, instance, **kwargs):
+        # Delete the associated file if it exists
+        if instance.picture:
+            instance.picture.delete(False)
+
 
 
 class Message(models.Model):
@@ -193,3 +216,9 @@ class HuddleUser(models.Model):
     def create_project(self, project: Project):
         # Your method implementation here
         pass
+
+@receiver(pre_delete, sender=HuddleUser)
+def skill_pre_delete(sender, instance, **kwargs):
+        # Delete the associated file if it exists
+        if instance.picture:
+            instance.picture.delete(False)

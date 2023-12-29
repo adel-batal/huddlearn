@@ -1,11 +1,12 @@
 
+
+![img_4.png](img_4.png)
+
 # BACKEND for HUDDLEARN
 
-Draftly working, 
-You can register new user, login
 Work with JWT tokens
 
-You can use GET POST PATCH, to list, add and modify this entities
+You can use GET POST PUT PATCH DELETE, use additional actions, use pictures, filter for this entities:
 1. skills
 2. studygroups
 3. projectgroups
@@ -55,7 +56,7 @@ JSON:
 
 
 ## Complete CRUD endpoints, JSON:
-### by default, the base url is: ```localhost:8008/```
+### by default in dev, the base url is: ```localhost:8000/```
 
 ```
 /skills/
@@ -87,8 +88,6 @@ JSON example for PATCH ```studygroups/10/```:
 ```
 
 
-
-
 (See huddleapi/models.py for fields names)
 
 You are getting JSON in response
@@ -101,14 +100,14 @@ JSON: ```{ "user_id": <HuddleUserID> }```
 /projectgroups/<projectgroup_id>/add_member/
 /projectgroups/<projectgroup_id>/remove_member/
 ```
-*Logic*: With all check (if such user by user_id exists, if he is not alredy in the group), 
-if requesting user (by token) is creator or coordinator of the group user will be added to memeber, if not - to 
+*Logic*: With all check (if such user by user_id exists, if he is not already in the group), 
+if requesting user (by token) is creator or coordinator of the group user will be added to member, if not - to 
 ```request_users``` field. 
 For removing - you cannot remove coordinator, user can remove himself, you must be creator or coordinator to remove other users,
 if users is in the ```request_users``` field this action removes him
 
 ## Skills
-for this endpoints:
+for those endpoints:
 ```
 /studygroups/<studygroup_id>/
 /projectgroups/<projectgroup_id>/
@@ -130,7 +129,7 @@ Examples:
 /projectgroups/9/remove_skill/
 ```
 
-*Logic* will check if skill exist, you cannot add skill allready added, and cannot remove missing skill
+*Logic* will check if skill exist, you cannot add skill already added, and cannot remove missing skill
 
 ## Filtering
 
@@ -144,10 +143,63 @@ examples:
 
 ```
 
+## Pictures
+
+Back-end support picture uploads, store them and allow to request it by static urls, given in 'picture' fields of all entities.
+
+Uploaded picture automatically rescaled to (300,300). 
+
+With GET you automatically get response with ```picture``` field with url you can directly get from server
+
+To upload picture you can use POST, PUT and PATCH
+To do so use  ```Content-Type: multipart/form-data```
+
+Fill in the text fields like JSON request (i.e. ```name```, ```description```) 
+
+Use the field ```picture``` with the file data of the image
+
+simple example:
+```
+const axios = require('axios');
+const FormData = require('form-data');
+const fs = require('fs');
+
+const apiUrl = 'http://127.0.0.1:8000/studygroups/';
+
+// Create form data
+const form = new FormData();
+form.append('name', 'YourGroupName');
+form.append('description', 'YourGroupDescription');
+
+// Attach a file (replace 'path/to/your/image.jpg' with the actual path)
+form.append('picture', fs.createReadStream('path/to/your/groupimage.jpg'));
+
+// Make the POST request
+axios.post(apiUrl, form, {
+    headers: {
+        ...form.getHeaders(),
+        // Include additional headers if needed
+        // 'Authorization': 'Bearer YourAccessToken',
+    },
+})
+    .then(response => {
+        console.log('Success:', response.data);
+    })
+    .catch(error => {
+        console.error('Error:', error.response.data);
+    });
+```
+
+
 
 # POSTMAN
-There is a also ```HUDDLE.postman_collection.json``` collection for POSTMAN working
-You can use it
+There is a also ```HUDDLE.postman_collection.json``` collection in this repo for POSTMAN working
+
+You must first create users, use Authorization with JWT token, create entries
+You can use it and see how endpoints are reached
+
+
+
 
 
 # Installation Notes
@@ -207,6 +259,7 @@ pip install django
 pip install djangorestframework
 pip install djangorestframework-jwt
 pip install django-filter
+pip install Pillow
 
 ```
 
@@ -257,6 +310,4 @@ Have fun
 
 # TODO
 
-1. PICTURES
-
-// in the future it may requre more functionality
+// in the future back-end may requre more functionality

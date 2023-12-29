@@ -1,3 +1,5 @@
+IMAGE_SIZE=(300,300)
+
 # from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import IsOwnerOrReadOnly, IsCoordinatorOrReadOnly, IsUserOrReadOnly
 from rest_framework import generics
@@ -16,6 +18,8 @@ from .serializers import HuddleUserSerializer, StudyGroupSerializer, ProjectGrou
 
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import StudyGroupFilter, ProjectGroupFilter
+
+from PIL import Image
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -49,6 +53,49 @@ class HuddleUserViewSet(viewsets.ModelViewSet):
     queryset = HuddleUser.objects.all().order_by('user__date_joined')
     serializer_class = HuddleUserSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        instance = serializer.instance
+
+        if instance.picture is not None:
+            try:
+                original_image = Image.open(instance.picture.path)
+                # Resize the image (adjust the size as needed)
+                original_image.thumbnail(IMAGE_SIZE, Image.LANCZOS)
+                # Save the resized image back to the same path
+                original_image.save(instance.picture.path, format=original_image.format)
+            except (FileNotFoundError, IOError, ValueError):
+                instance.picture = None
+                instance.save()
+
+    def perform_update(self, serializer):
+        # Handle the existing picture file
+        old_instance = HuddleUser.objects.get(pk=serializer.instance.pk)
+        old_picture = old_instance.picture
+
+        # Call the serializer's update method to update the instance
+        super().perform_update(serializer)
+
+        # Handle the new picture file
+        new_picture = serializer.instance.picture
+
+        # Delete the old picture file if it has changed
+        if old_picture and old_picture != new_picture:
+            old_picture.delete(save=False)
+
+        # Resize the new picture file
+        if new_picture is not None:
+            try:
+                original_image = Image.open(new_picture.path)
+                # Resize the image (adjust the size as needed)
+                original_image.thumbnail(IMAGE_SIZE, Image.LANCZOS)
+                # Save the resized image back to the same path
+                original_image.save(new_picture.path, format=original_image.format)
+            except (FileNotFoundError, IOError, ValueError):
+                serializer.instance.picture = None
+                serializer.instance.save()
+
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsUserOrReadOnly])
     def add_skill(self, request, pk=None):
@@ -98,8 +145,6 @@ class HuddleUserViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
 class SkillViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -113,8 +158,47 @@ class SkillViewSet(viewsets.ModelViewSet):
 
         serializer.validated_data['creator'] = creator_default_value
 
-        instance = serializer.save()
+        super().perform_create(serializer)
+        instance = serializer.instance
 
+        if instance.picture is not None:
+            try:
+                original_image = Image.open(instance.picture.path)
+                # Resize the image (adjust the size as needed)
+                original_image.thumbnail(IMAGE_SIZE, Image.LANCZOS)
+                # Save the resized image back to the same path
+                original_image.save(instance.picture.path, format=original_image.format)
+            except (FileNotFoundError, IOError, ValueError):
+                instance.picture = None
+                instance.save()
+
+
+    def perform_update(self, serializer):
+        # Handle the existing picture file
+        old_instance = Skill.objects.get(pk=serializer.instance.pk)
+        old_picture = old_instance.picture
+
+        # Call the serializer's update method to update the instance
+        super().perform_update(serializer)
+
+        # Handle the new picture file
+        new_picture = serializer.instance.picture
+
+        # Delete the old picture file if it has changed
+        if old_picture and old_picture != new_picture:
+            old_picture.delete(save=False)
+
+        # Resize the new picture file
+        if new_picture is not None:
+            try:
+                original_image = Image.open(new_picture.path)
+                # Resize the image (adjust the size as needed)
+                original_image.thumbnail(IMAGE_SIZE, Image.LANCZOS)
+                # Save the resized image back to the same path
+                original_image.save(new_picture.path, format=original_image.format)
+            except (FileNotFoundError, IOError, ValueError):
+                serializer.instance.picture = None
+                serializer.instance.save()
 
 class StudyGroupViewSet(viewsets.ModelViewSet):
     """
@@ -135,15 +219,53 @@ class StudyGroupViewSet(viewsets.ModelViewSet):
 
         serializer.validated_data['creator'] = creator_default_value
         # Save the instance
-        instance = serializer.save()
+        super().perform_create(serializer)
+        instance = serializer.instance
         # Add the creator to the list of members and coordinators
         instance.members.add(creator_default_value)
         instance.coordinators.add(creator_default_value)
         group_chat = Chat.objects.create()
         instance.chat = group_chat
         instance.save()
+        if instance.picture is not None:
+            try:
+                original_image = Image.open(instance.picture.path)
+                # Resize the image (adjust the size as needed)
+                original_image.thumbnail(IMAGE_SIZE, Image.LANCZOS)
+                # Save the resized image back to the same path
+                original_image.save(instance.picture.path, format=original_image.format)
+            except (FileNotFoundError, IOError, ValueError):
+                instance.picture = None
+                instance.save()
 
         # serializer.save(creator=self.request.user)
+    def perform_update(self, serializer):
+        # Handle the existing picture file
+        old_instance = StudyGroup.objects.get(pk=serializer.instance.pk)
+        old_picture = old_instance.picture
+
+        # Call the serializer's update method to update the instance
+        super().perform_update(serializer)
+
+        # Handle the new picture file
+        new_picture = serializer.instance.picture
+
+        # Delete the old picture file if it has changed
+        if old_picture and old_picture != new_picture:
+            old_picture.delete(save=False)
+
+        # Resize the new picture file
+        if new_picture is not None:
+            try:
+                original_image = Image.open(new_picture.path)
+                # Resize the image (adjust the size as needed)
+                original_image.thumbnail(IMAGE_SIZE, Image.LANCZOS)
+                # Save the resized image back to the same path
+                original_image.save(new_picture.path, format=original_image.format)
+            except (FileNotFoundError, IOError, ValueError):
+                serializer.instance.picture = None
+                serializer.instance.save()
+
 
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly])
@@ -225,7 +347,8 @@ class StudyGroupViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
+    @action(detail=True, methods=['post'],
+            permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
     def add_skill(self, request, pk=None):
         group = self.get_object()
         # request_huddlexuser = HuddleUser.objects.get(user=self.request.user)
@@ -249,7 +372,8 @@ class StudyGroupViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
+    @action(detail=True, methods=['post'],
+            permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
     def remove_skill(self, request, pk=None):
         group = self.get_object()
         # request_huddleuser = HuddleUser.objects.get(user=self.request.user)
@@ -271,9 +395,6 @@ class StudyGroupViewSet(viewsets.ModelViewSet):
 
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 
 
 class ProjectGroupViewSet(viewsets.ModelViewSet):
@@ -287,20 +408,58 @@ class ProjectGroupViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProjectGroupFilter
 
-
     @transaction.atomic
     def perform_create(self, serializer):
         creator_default_value = HuddleUser.objects.get(user=self.request.user)
 
         serializer.validated_data['creator'] = creator_default_value
         # Save the instance
-        instance = serializer.save()
+        super().perform_create(serializer)
+        instance = serializer.instance
         # Add the creator to the list of members and coordinators
         instance.members.add(creator_default_value)
         instance.coordinators.add(creator_default_value)
         group_chat = Chat.objects.create()
         instance.chat = group_chat
         instance.save()
+        if instance.picture is not None:
+            try:
+                original_image = Image.open(instance.picture.path)
+                # Resize the image (adjust the size as needed)
+                original_image.thumbnail(IMAGE_SIZE, Image.LANCZOS)
+                # Save the resized image back to the same path
+                original_image.save(instance.picture.path, format=original_image.format)
+            except (FileNotFoundError, IOError, ValueError):
+                instance.picture = None
+                instance.save()
+
+    def perform_update(self, serializer):
+        # Handle the existing picture file
+        old_instance = ProjectGroup.objects.get(pk=serializer.instance.pk)
+        old_picture = old_instance.picture
+
+        # Call the serializer's update method to update the instance
+        super().perform_update(serializer)
+
+        # Handle the new picture file
+        new_picture = serializer.instance.picture
+
+        # Delete the old picture file if it has changed
+        if old_picture and old_picture != new_picture:
+            old_picture.delete(save=False)
+
+        # Resize the new picture file
+        if new_picture is not None:
+            try:
+                original_image = Image.open(new_picture.path)
+                # Resize the image (adjust the size as needed)
+                original_image.thumbnail(IMAGE_SIZE, Image.LANCZOS)
+                # Save the resized image back to the same path
+                original_image.save(new_picture.path, format=original_image.format)
+            except (FileNotFoundError, IOError, ValueError):
+                serializer.instance.picture = None
+                serializer.instance.save()
+
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly])
     def add_member(self, request, pk=None):
@@ -381,8 +540,8 @@ class ProjectGroupViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
+    @action(detail=True, methods=['post'],
+            permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
     def add_skill(self, request, pk=None):
         group = self.get_object()
         # request_huddlexuser = HuddleUser.objects.get(user=self.request.user)
@@ -406,7 +565,8 @@ class ProjectGroupViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
+    @action(detail=True, methods=['post'],
+            permission_classes=[permissions.IsAuthenticatedOrReadOnly, IsCoordinatorOrReadOnly])
     def remove_skill(self, request, pk=None):
         group = self.get_object()
         # request_huddleuser = HuddleUser.objects.get(user=self.request.user)
@@ -428,5 +588,3 @@ class ProjectGroupViewSet(viewsets.ModelViewSet):
 
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-

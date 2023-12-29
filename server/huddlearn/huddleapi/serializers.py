@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-
+from PIL import Image
 
 from .models import Skill, StudyGroup,ProjectGroup,Project,Message,HuddleUser
 
@@ -14,10 +14,10 @@ class HuddleUserSerializer(serializers.ModelSerializer):
         model = HuddleUser
         fields = '__all__'
 
+    picture = serializers.ImageField(use_url=True, allow_null=True)
+
 class SkillListSerializer(serializers.Serializer):
     skill_id = serializers.IntegerField()  # Assuming user_id is sent in the request
-
-
 
 
 
@@ -27,8 +27,12 @@ class SkillSerializer(serializers.ModelSerializer):
         model = Skill
         fields = '__all__'
 
+    picture = serializers.ImageField(use_url=True, allow_null=True)
+
 
 class StudyGroupSerializer(serializers.ModelSerializer):
+
+    picture = serializers.ImageField(use_url=True, required=False)
     class Meta:
         model = StudyGroup
         fields = '__all__'
@@ -39,6 +43,7 @@ class StudyGroupSerializer(serializers.ModelSerializer):
             'skills': {'required': False},
             'chat':{'required': False}
         }
+
 
 class StudyGroupMembershipSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()  # Assuming user_id is sent in the request
@@ -57,6 +62,7 @@ class ProjectGroupSerializer(serializers.ModelSerializer):
             'chat':{'required': False},
             'archived_projects':{'required': False},
         }
+    picture = serializers.ImageField(use_url=True, allow_null=True)
 
 class ProjectGroupMembershipSerializer(serializers.Serializer):
     user_id = serializers.IntegerField()  # Assuming user_id is sent in the request
@@ -67,6 +73,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = '__all__'
+
+    picture = serializers.ImageField(use_url=True, allow_null=True)
 
 #
 # class ChatSerializer(serializers.ModelSerializer):
