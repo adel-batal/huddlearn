@@ -13,14 +13,14 @@ function App() {
   const [currentGroups, setCurrentGroups] = useState(groups);
 
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('');
-      console.log('Data:', response.data);
-    } catch (error) {
-      console.error('Oops, Django is playing hard to get:', error);
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.get('');
+  //     console.log('Data:', response.data);
+  //   } catch (error) {
+  //     console.error('Oops, Django is playing hard to get:', error);
+  //   }
+  // };
 
 
   // temporary code until we have proper authentication and state management

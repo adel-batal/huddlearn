@@ -18,13 +18,13 @@ const GroupCard: React.FC<GroupCardProps> = ({ group }) => {
                 {window.owner === group.owner
                     ? (
                         <div className={styles.cardActions}>
-                            <button className={styles.actionButton}>Edit</button>
-                            <button className={styles.actionButton}>Delete</button>
+                            <button className={`${styles.actionButton} ${styles.editGroupButton}`}>Edit</button>
+                            <button className={`${styles.actionButton} ${styles.deleteGroupButton}`}>Delete</button>
                         </div>
                     )
                     : (
                         <div className={styles.cardActions}>
-                            <button className={styles.actionButton}>Join</button>
+                            <button className={`${styles.actionButton} ${styles.joinGroupButton}`}>Request to join</button>
                         </div>
 
                     )}

@@ -27,3 +27,29 @@
     gap: 5px;
     margin-bottom: 10px;
 }
+
+.cardActions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+
+.actionButton {
+    padding: 10px 20px;
+    border-radius: 30px;
+    color: white;
+    cursor: pointer;
+}
+
+.editGroupButton,
+.joinGroupButton {
+    background-color: var(--purple);
+}
+
+.deleteGroupButton {
+    border: 1px solid var(--pink);
+    color: var(--pink);
+}
