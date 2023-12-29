@@ -44,6 +44,7 @@ function App() {
   }, [])
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('huddle.user');
     setMyGroups(currentGroups.filter(group => group.owner === storedUser?.id));
   }, [currentGroups])
 
