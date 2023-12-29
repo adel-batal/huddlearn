@@ -3,6 +3,7 @@ export type NavbarProps = {
     openLoginModal: () => void;
     openRegisterModal: () => void;
     loggedInUser: User | null;
+    handleLogout: () => void;
 }
 
 export type Group = {
