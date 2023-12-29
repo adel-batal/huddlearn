@@ -3,7 +3,9 @@ import ViewContainer from "../../components/ViewContainer/ViewContainer";
 const Home = () => {
     return (
         <ViewContainer>
-            <h1>Home</h1>
+            <div className="view-header">
+                <h1>Home</h1>
+            </div>
         </ViewContainer>
     );
 };
