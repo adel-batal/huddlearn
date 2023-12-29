@@ -2,11 +2,18 @@ import BaseModal from '../BaseModal/BaseModal';
 import { CreateGroupModalProps } from '../../../types/modal';
 import modalStyles from '../ModalCommonStyles.module.css';
 import styles from './CreateGroupModal.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Group } from '../../../types/types';
 
 const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
     const [group, setGroup] = useState<Group | null>(null);
+
+    useEffect(() => {
+        if (props?.group) {
+            setGroup(props.group);
+        }
+    }, [props?.group])
+
     const {
         contentContainer,
         inputRow,
@@ -44,12 +51,13 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
     return (
         <BaseModal {...props}>
             <div className={contentContainer}>
-                <h1>Create New Group</h1>
+                <h1>{props.isInEditMode ? 'Edit' : 'Create New'} Group</h1>
                 <div className={inputRow}>
                     <span>Group name</span>
                     <input
                         name='name'
                         type="text" placeholder="Awesome group"
+                        value={group?.name || ''}
                         onChange={setGroupData}
                     />
                 </div>
@@ -58,6 +66,7 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
                     <input
                         name='description'
                         type="text"
+                        value={group?.description || ''}
                         placeholder="My group description"
                         onChange={setGroupData}
                     />

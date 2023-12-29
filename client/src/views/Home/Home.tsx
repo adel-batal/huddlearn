@@ -1,7 +1,12 @@
 import ViewContainer from "../../components/ViewContainer/ViewContainer";
 import Groups from "../Groups/Groups";
 
-const Home = ({ groups, loggedInUser, handleEditGroup, handleRequestJoinGroup, handleDeleteGroup }) => {
+const Home = ({
+    groups,
+    loggedInUser,
+    handleEditGroup,
+    handleRequestJoinGroup,
+    handleDeleteGroup }) => {
     return (
         <ViewContainer>
             {loggedInUser
@@ -26,8 +31,6 @@ const Home = ({ groups, loggedInUser, handleEditGroup, handleRequestJoinGroup, h
                     </div>
                 )
             }
-
-
         </ViewContainer>
     );
 };

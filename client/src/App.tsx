@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './views/Home/Home'
 import Groups from './views/Groups/Groups'
 import Navbar from './components/Navbar/Navbar'
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import CreateGroupModal from './components/Modals/CreateGroupModal/CreateGroupModal';
 import { Group as GroupType } from './types/types';
 import Group from './views/Group/Group';
@@ -23,7 +23,8 @@ function App() {
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [myGroups, setMyGroups] = useState<GroupType[]>([]); // groups that the user is a member of
   const [loggedInUser, setLoggedInUser] = useState(currentUser); // user object
-
+  const [isInEditMode, setIsInEditMode] = useState(false); // whether the create group modal is in edit mode or not
+  const [groupToEdit, setGroupToEdit] = useState<GroupType | null>(null); // group object to edit
   // const fetchData = async () => {
   //   try {
   //     const response = await axios.get('');
@@ -50,7 +51,22 @@ function App() {
 
   const handleEditGroup = (id: string | undefined) => {
     if (!id) return
-    console.log('Edit group with id:', id);
+    setIsInEditMode(true);
+    setGroupToEdit(myGroups.find(group => group.id === id) || null);
+    setIsCreateGroupModalOpen(true);
+  }
+
+  const editGroup = (group: GroupType) => {
+    if (!group) return
+    const groupToEdit = myGroups.find(groupData => groupData.id === group.id);
+    if (!groupToEdit) return
+    const updatedGroups = myGroups.map(groupData => {
+      if (groupData.id === group.id) {
+        return group;
+      }
+      return groupData;
+    });
+    setMyGroups(updatedGroups);
   }
 
   const handleRequestJoinGroup = (id: string | undefined) => {
@@ -98,7 +114,16 @@ function App() {
           <Route path="/groups/:id" Component={Group} />
         </Routes>
       </Router>
-      <CreateGroupModal onCreateGroup={handleCreateGroup} isOpen={isCreateGroupModalOpen} onClose={() => setIsCreateGroupModalOpen(false)} />
+      <CreateGroupModal
+        isInEditMode={isInEditMode}
+        group={isInEditMode ? groupToEdit : undefined}
+        onCreateGroup={isInEditMode ? editGroup : handleCreateGroup}
+        isOpen={isCreateGroupModalOpen}
+        onClose={() => {
+          setIsCreateGroupModalOpen(false)
+          setIsInEditMode(false)
+        }}
+      />
       <LoginModal
         onLogin={handleLogin}
         isOpen={isLoginModalOpen}

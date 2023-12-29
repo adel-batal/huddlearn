@@ -8,6 +8,8 @@ export type ModalProps = {
 
 
 export type CreateGroupModalProps = ModalProps & {
+    isInEditMode?: boolean;
+    group?: Group;
     onCreateGroup: (group: Group) => void;
 };
 
