@@ -29,7 +29,7 @@ function App() {
           Authorization: `JWT ${localStorage.getItem('huddle.jwtToken')}`
         },
       });
-      setCurrentGroups(response?.data?.studygroup ?? []);
+      setCurrentGroups(response?.data.results ?? []);
     } catch (error) {
       console.error('Oops, Django is playing hard to get:', error);
     }
