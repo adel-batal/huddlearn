@@ -13,7 +13,7 @@ export type Group = {
     image?: string;
     members?: number;
     type?: string;
-    owner: string;
+    creator: string;
 }
 
 export type GroupsProps = {

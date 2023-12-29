@@ -17,7 +17,7 @@ const Groups: React.FC<GroupsProps> = ({ title, groups, loggedInUser, handleEdit
                         editGroup={handleEditGroup}
                         requestJoinGroup={handleRequestJoinGroup}
                         deleteGroup={handleDeleteGroup}
-                        currentUserIsOwner={group.owner === loggedInUser?.id}
+                        currentUserIsOwner={group.creator === loggedInUser?.id}
                         />
                 ))}
             </div>

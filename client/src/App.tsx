@@ -45,12 +45,12 @@ function App() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('huddle.user');
-    setMyGroups(currentGroups.filter(group => group.owner === storedUser?.id));
+    setMyGroups(currentGroups.filter(group => group.creator === storedUser?.id));
   }, [currentGroups])
 
 
   const handleCreateGroup = (group: GroupType) => {
-    const newGroup = { ...group, owner: loggedInUser?.id, type: 'study' };
+    const newGroup = { ...group, creator: loggedInUser?.id, type: 'study' };
     try {
       axios.post(`${API}/studygroups/`, newGroup, {
         headers: {
