@@ -7,10 +7,20 @@ import { useEffect, useState } from 'react';
 import CreateGroupModal from './components/Modals/CreateGroupModal/CreateGroupModal';
 import { Group as GroupType } from './types/types';
 import Group from './views/Group/Group';
-
+import axios from 'axios';
 function App() {
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [currentGroups, setCurrentGroups] = useState(groups);
+
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('');
+      console.log('Data:', response.data);
+    } catch (error) {
+      console.error('Oops, Django is playing hard to get:', error);
+    }
+  };
 
 
   // temporary code until we have proper authentication and state management
