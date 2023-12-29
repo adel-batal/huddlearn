@@ -3,7 +3,7 @@ import ViewContainer from "../../components/ViewContainer/ViewContainer";
 import GroupCard from "../../components/GroupCard/GroupCard";
 import styles from "./Groups.module.css";
 
-const Groups: React.FC<GroupsProps> = ({ title, groups, handleEditGroup, handleRequestJoinGroup, handleDeleteGroup }) => {
+const Groups: React.FC<GroupsProps> = ({ title, groups, loggedInUser, handleEditGroup, handleRequestJoinGroup, handleDeleteGroup }) => {
     return (
         <ViewContainer>
             <div className="view-header">
@@ -16,7 +16,9 @@ const Groups: React.FC<GroupsProps> = ({ title, groups, handleEditGroup, handleR
                         group={group}
                         editGroup={handleEditGroup}
                         requestJoinGroup={handleRequestJoinGroup}
-                        deleteGroup={handleDeleteGroup} />
+                        deleteGroup={handleDeleteGroup}
+                        currentUserIsOwner={group.owner === loggedInUser?.id}
+                        />
                 ))}
             </div>
         </ViewContainer>

@@ -18,6 +18,7 @@ export type Group = {
 export type GroupsProps = {
     groups: Group[];
     title: string;
+    loggedInUser: User | null;
     handleEditGroup: (id: string) => void;
     handleDeleteGroup: (id: string) => void;
     handleRequestJoinGroup: (id: string) => void;
@@ -32,6 +33,7 @@ export type GroupCardProps = {
     deleteGroup: (id: string) => void;
     editGroup: (id: string) => void;
     requestJoinGroup: (id: string) => void;
+    currentUserIsOwner: boolean;
 }
 
 export type User = {

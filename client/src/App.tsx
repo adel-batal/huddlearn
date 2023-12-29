@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './views/Home/Home'
 import Groups from './views/Groups/Groups'
 import Navbar from './components/Navbar/Navbar'
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CreateGroupModal from './components/Modals/CreateGroupModal/CreateGroupModal';
 import { Group as GroupType } from './types/types';
 import Group from './views/Group/Group';
@@ -11,16 +11,18 @@ import axios from 'axios';
 import LoginModal from './components/Modals/LoginModal/LoginModal';
 import RegisterModal from './components/Modals/RegisterModal/RegisterModal';
 function App() {
+  const currentUser = {
+    id: '1',
+    name: 'John Doe',
+    email: 'me@example.com'
+  };
+  // const currentUser = null;
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [currentGroups, setCurrentGroups] = useState(groups);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [myGroups, setMyGroups] = useState<GroupType[]>([]); // groups that the user is a member of
-  const loggedInUser = {
-    id: '1',
-    name: 'John Doe',
-    email: 'me@example.com'
-  };
+  const [loggedInUser, setLoggedInUser] = useState(currentUser); // user object
 
   // const fetchData = async () => {
   //   try {
@@ -34,14 +36,8 @@ function App() {
 
   // temporary code until we have proper authentication and state management
   useEffect(() => {
-    interface CustomWindow extends Window {
-      owner: string;
-    }
-
-    const customWindow = window as unknown as CustomWindow;
-    customWindow.owner = '1';
-
-    setMyGroups(groups.filter(group => group.owner === customWindow.owner));
+    setLoggedInUser(currentUser);
+    setMyGroups(groups.filter(group => group.owner === currentUser?.id));
 
   }, [])
 
@@ -79,7 +75,7 @@ function App() {
           openCreateGroupModal={() => setIsCreateGroupModalOpen(true)}
           openLoginModal={() => setIsLoginModalOpen(true)}
           openRegisterModal={() => setIsRegisterModalOpen(true)}
-          loggedInUser={null}
+          loggedInUser={loggedInUser}
         />
         <Routes>
           <Route path="/" element={<Home
@@ -87,6 +83,7 @@ function App() {
             handleEditGroup={handleEditGroup}
             handleRequestJoinGroup={handleRequestJoinGroup}
             handleDeleteGroup={handleDeleteGroup}
+            loggedInUser={loggedInUser}
           />
           } />
           <Route path="/groups" element={<Groups
@@ -95,6 +92,7 @@ function App() {
             handleEditGroup={handleEditGroup}
             handleRequestJoinGroup={handleRequestJoinGroup}
             handleDeleteGroup={handleDeleteGroup}
+            loggedInUser={loggedInUser}
           />
           } />
           <Route path="/groups/:id" Component={Group} />
