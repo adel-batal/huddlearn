@@ -12,14 +12,14 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
         modalActions,
         actionButton,
         createButton,
-        cancelButton
+        cancelButton,
+        radioInput
     } = styles;
 
     const handleGroupCreateClick = () => {
         if (group?.name && group?.description) {
             props.onCreateGroup(group);
-            setGroup(null);
-            props.onClose();
+            handleClose();
         } else {
             alert("Please enter a group name and description");
         }
@@ -32,6 +32,12 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
             image: "https://picsum.photos/200/300",
         }) as Group | null);
     }
+
+    const handleClose = () => {
+        setGroup(null);
+        props.onClose();
+    }
+
     return (
         <div>
             <BaseModal {...props}>
@@ -54,16 +60,27 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
                             onChange={setGroupData}
                         />
                     </div>
+                    <div className={inputRow}>
+                        <span>Group type</span>
+                        <div>
+                            <input className={radioInput} type="radio" id="public" name="type" value="public" onChange={setGroupData} />
+                            <label htmlFor="public">Project</label>
+                        </div>
+                        <div>
+                            <input className={radioInput} type="radio" id="private" name="type" value="private" onChange={setGroupData} />
+                            <label htmlFor="private">Study</label>
+                        </div>
+                    </div>
                     <div className={modalActions}>
                         <button
-                            className={`${actionButton} ${createButton}`}
+                            className={`${actionButton} ${createButton} ${group?.name && group?.description && group?.type ? '' : 'disabled'}`}
                             onClick={handleGroupCreateClick}
                         >
                             Create Group
                         </button>
                         <button
                             className={`${actionButton} ${cancelButton}`}
-                            onClick={props.onClose}
+                            onClick={handleClose}
                         >
                             Cancel
                         </button>

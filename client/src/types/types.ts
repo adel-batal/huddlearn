@@ -8,6 +8,8 @@ export type Group = {
     description: string;
     image?: string;
     members?: number;
+    type?: string;
+    owner: string;
 }
 
 export type GroupsProps = {

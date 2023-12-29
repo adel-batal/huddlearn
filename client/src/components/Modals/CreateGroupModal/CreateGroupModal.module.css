@@ -37,3 +37,7 @@
     border: 1px solid var(--purple);
     color: var(--purple);
 }
+
+.radioInput {
+    margin-right: 5px;
+}

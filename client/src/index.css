@@ -31,6 +31,11 @@ input {
     padding: 5px;
 }
 
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 :root {
     --yellow: #ffbe0b;
     --orange: #fb5607;
