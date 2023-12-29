@@ -1,11 +1,14 @@
 import { useParams } from "react-router-dom";
+import ViewContainer from "../../components/ViewContainer/ViewContainer";
 
 const Group = () => {
     const { id } = useParams();
     return (
-        <div className="view-header">
-            <h1>Group {id}</h1>
-        </div>
+        <ViewContainer>
+            <div className="view-header">
+                <h1>Group {id}</h1>
+            </div>
+        </ViewContainer>
     )
 }
 
