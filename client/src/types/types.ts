@@ -1,5 +1,6 @@
 export type NavbarProps = {
     openCreateGroupModal: () => void;
+    loggedInUser: User | null;
 }
 
 export type Group = {
@@ -28,4 +29,12 @@ export type GroupCardProps = {
     deleteGroup: (id: string) => void;
     editGroup: (id: string) => void;
     requestJoinGroup: (id: string) => void;
+}
+
+export type User = {
+    id: string;
+    name: string;
+    email: string;
+    groups?: Group[];
+    type?: string;
 }

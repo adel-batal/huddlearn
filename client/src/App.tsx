@@ -11,7 +11,11 @@ import axios from 'axios';
 function App() {
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [currentGroups, setCurrentGroups] = useState(groups);
-
+  const loggedInUser = {
+    id: '1',
+    name: 'John Doe',
+    email: 'me@example.com'
+  };
 
   // const fetchData = async () => {
   //   try {
@@ -57,7 +61,7 @@ function App() {
   return (
     <>
       <Router>
-        <Navbar openCreateGroupModal={() => setIsCreateGroupModalOpen(true)} />
+        <Navbar openCreateGroupModal={() => setIsCreateGroupModalOpen(true)} loggedInUser={loggedInUser}/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/groups" element={<Groups

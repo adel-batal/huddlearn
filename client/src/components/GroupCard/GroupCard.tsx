@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { GroupCardProps } from '../../types/types'
 import styles from './GroupCard.module.css'
 import { Link } from 'react-router-dom'
+
 const GroupCard: React.FC<GroupCardProps> = ({ group, deleteGroup, editGroup, requestJoinGroup }) => {
-
-
+    const isOwner = useRef(window.owner === group.owner);
     const handleEditGroup = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string | undefined) => {
         e.preventDefault()
         e.stopPropagation()
@@ -38,7 +38,7 @@ const GroupCard: React.FC<GroupCardProps> = ({ group, deleteGroup, editGroup, re
                     <span>{group.name}</span>
                     <span>{group.description}</span>
                 </div>
-                {window.owner === group.owner
+                {isOwner
                     ? (
                         <div className={styles.cardActions}>
                             <button

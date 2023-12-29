@@ -36,6 +36,10 @@ input {
     pointer-events: none;
 }
 
+.hidden {
+    display: none;
+}
+
 :root {
     --yellow: #ffbe0b;
     --orange: #fb5607;
