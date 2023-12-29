@@ -9,10 +9,12 @@ import { Group as GroupType } from './types/types';
 import Group from './views/Group/Group';
 import axios from 'axios';
 import LoginModal from './components/Modals/LoginModal/LoginModal';
+import RegisterModal from './components/Modals/RegisterModal/RegisterModal';
 function App() {
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [currentGroups, setCurrentGroups] = useState(groups);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const loggedInUser = {
     id: '1',
     name: 'John Doe',
@@ -62,6 +64,9 @@ function App() {
   const handleLogin = () => {
     console.log('Login');
   }
+  const handleRegister = () => {
+    console.log('Register');
+  }
 
   return (
     <>
@@ -69,7 +74,9 @@ function App() {
         <Navbar
           openCreateGroupModal={() => setIsCreateGroupModalOpen(true)}
           openLoginModal={() => setIsLoginModalOpen(true)}
-          loggedInUser={null} />
+          openRegisterModal={() => setIsRegisterModalOpen(true)}
+          loggedInUser={null}
+        />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/groups" element={<Groups
@@ -87,7 +94,13 @@ function App() {
       <LoginModal
         onLogin={handleLogin}
         isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)} />
+        onClose={() => setIsLoginModalOpen(false)}
+      />
+      <RegisterModal
+        onRegister={handleRegister}
+        isOpen={isRegisterModalOpen}
+        onClose={() => setIsRegisterModalOpen(false)}
+      />
     </>
   )
 }

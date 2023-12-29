@@ -14,3 +14,7 @@ export type CreateGroupModalProps = ModalProps & {
 export type LoginModalProps = ModalProps & {
     onLogin: (user: UserLogin) => void;
 };
+
+export type RegisterModalProps = ModalProps & {
+    onRegister: (user: UserLogin) => void;
+};
