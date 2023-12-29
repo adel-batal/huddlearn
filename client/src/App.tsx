@@ -18,7 +18,7 @@ function App() {
   };
   // const currentUser = null;
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
-  const [currentGroups, setCurrentGroups] = useState(groups);
+  const [currentGroups, setCurrentGroups] = useState([]);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [myGroups, setMyGroups] = useState<GroupType[]>([]); // groups that the user is a member of
@@ -37,7 +37,7 @@ function App() {
 
   useEffect(() => {
     setLoggedInUser(currentUser);
-    setCurrentGroups(groups);
+    setCurrentGroups([]);
     setMyGroups(currentGroups.filter(group => group.owner === currentUser?.id));
   }, [])
 
@@ -149,53 +149,5 @@ function App() {
     </>
   )
 }
-// fake group data until we connect to the backend
-const groups: GroupType[] = [
-  {
-    id: '1',
-    name: "Group 1",
-    description: "This is the first group",
-    members: 1,
-    image: "https://picsum.photos/200/300",
-    type: "study",
-    owner: '1'
-  },
-  {
-    id: '2',
-    name: "Group 2",
-    description: "This is the second group",
-    members: 2,
-    image: "https://picsum.photos/200/300",
-    type: "project",
-    owner: '1'
-  },
-  {
-    id: '3',
-    name: "Group 3",
-    description: "This is the third group",
-    members: 3,
-    image: "https://picsum.photos/200/300",
-    type: "study",
-    owner: '2'
-  },
-  {
-    id: '4',
-    name: "Group 4",
-    description: "This is the fourth group",
-    members: 4,
-    image: "https://picsum.photos/200/300",
-    type: "project",
-    owner: '4'
-  },
-  {
-    id: '5',
-    name: "Group 5",
-    description: "This is the fifth group",
-    members: 5,
-    image: "https://picsum.photos/200/300",
-    type: "study",
-    owner: '1'
-  },
-];
 
 export default App
