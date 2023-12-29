@@ -257,8 +257,6 @@ Have fun
 
 # TODO
 
-1. add skills additions
+1. PICTURES
 
-2. PICTURES
-
-// 5. in the future it may requre a lots of stuff
+// in the future it may requre more functionality
