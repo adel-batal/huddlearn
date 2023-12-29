@@ -3,7 +3,7 @@ export type NavbarProps = {
 }
 
 export type Group = {
-    id?: number;
+    id?: string;
     name: string;
     description: string;
     image?: string;
@@ -14,6 +14,9 @@ export type Group = {
 
 export type GroupsProps = {
     groups: Group[];
+    handleEditGroup: (id: string) => void;
+    handleDeleteGroup: (id: string) => void;
+    handleRequestJoinGroup: (id: string) => void;
   };
 
 export type ContainerComponentProps = {
@@ -22,4 +25,7 @@ export type ContainerComponentProps = {
 
 export type GroupCardProps = {
     group: Group;
+    deleteGroup: (id: string) => void;
+    editGroup: (id: string) => void;
+    requestJoinGroup: (id: string) => void;
 }

@@ -38,13 +38,36 @@ function App() {
       setCurrentGroups([...currentGroups, { ...group, id: currentGroups.length + 1 }]);
     }
   }
+
+
+  const handleEditGroup = (id: string | undefined) => {
+    if (!id) return
+    console.log('Edit group with id:', id);
+  }
+
+  const handleRequestJoinGroup = (id: string | undefined) => {
+    if (!id) return
+    console.log('Request to join group with id:', id);
+  }
+  const handleDeleteGroup = (id: string | undefined) => {
+    if (!id) return
+    console.log('Delete group with id:', id);
+  }
+
   return (
     <>
       <Router>
         <Navbar openCreateGroupModal={() => setIsCreateGroupModalOpen(true)} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/groups" element={<Groups groups={currentGroups} />} />
+          <Route path="/groups" element={<Groups
+            groups={currentGroups}
+            handleEditGroup={handleEditGroup}
+            handleRequestJoinGroup={handleRequestJoinGroup}
+            handleDeleteGroup={handleDeleteGroup}
+          />
+          }
+          />
           <Route path="/groups/:id" Component={Group} />
         </Routes>
       </Router>
@@ -55,7 +78,7 @@ function App() {
 // fake group data until we connect to the backend
 const groups: GroupType[] = [
   {
-    id: 1,
+    id: '1',
     name: "Group 1",
     description: "This is the first group",
     members: 1,
@@ -64,7 +87,7 @@ const groups: GroupType[] = [
     owner: '1'
   },
   {
-    id: 2,
+    id: '2',
     name: "Group 2",
     description: "This is the second group",
     members: 2,
@@ -73,7 +96,7 @@ const groups: GroupType[] = [
     owner: '1'
   },
   {
-    id: 3,
+    id: '3',
     name: "Group 3",
     description: "This is the third group",
     members: 3,
@@ -82,7 +105,7 @@ const groups: GroupType[] = [
     owner: '2'
   },
   {
-    id: 4,
+    id: '4',
     name: "Group 4",
     description: "This is the fourth group",
     members: 4,
@@ -91,7 +114,7 @@ const groups: GroupType[] = [
     owner: '4'
   },
   {
-    id: 5,
+    id: '5',
     name: "Group 5",
     description: "This is the fifth group",
     members: 5,
