@@ -1,5 +1,6 @@
 export type NavbarProps = {
     openCreateGroupModal: () => void;
+    openLoginModal: () => void;
     loggedInUser: User | null;
 }
 
@@ -37,4 +38,9 @@ export type User = {
     email: string;
     groups?: Group[];
     type?: string;
+}
+
+export type UserLogin = {
+    email: string;
+    password: string;
 }

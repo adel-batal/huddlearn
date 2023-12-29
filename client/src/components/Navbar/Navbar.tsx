@@ -2,7 +2,7 @@ import styles from './Navbar.module.css';
 import { Link } from 'react-router-dom';
 import { NavbarProps } from '../../types/types';
 
-const Navbar: React.FC<NavbarProps> = ({ openCreateGroupModal, loggedInUser }) => {
+const Navbar: React.FC<NavbarProps> = ({ openCreateGroupModal, loggedInUser, openLoginModal }) => {
     return (
         <header className={styles.navbar}>
             <div className={styles.logo}><Link to="/">HuddLearn</Link></div>
@@ -19,9 +19,9 @@ const Navbar: React.FC<NavbarProps> = ({ openCreateGroupModal, loggedInUser }) =
                         </span>
                     </li>
                     <li className={`${loggedInUser && 'hidden'}`}>
-                        <Link to="/groups" className={styles.navLink}>
+                        <span className={styles.navLink} onClick={openLoginModal}>
                             Login
-                        </Link>
+                        </span>
                     </li>
                     <li className={`${loggedInUser && 'hidden'}`}>
                         <span className={styles.cta} onClick={openCreateGroupModal}>

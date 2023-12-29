@@ -1,5 +1,6 @@
 import BaseModal from '../BaseModal/BaseModal';
 import { CreateGroupModalProps } from '../../../types/modal';
+import modalStyles from '../ModalCommonStyles.module.css';
 import styles from './CreateGroupModal.module.css';
 import { useState } from 'react';
 import { Group } from '../../../types/types';
@@ -11,6 +12,8 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
         inputRow,
         modalActions,
         actionButton,
+    } = modalStyles;
+    const {
         createButton,
         cancelButton,
         radioInput
@@ -39,55 +42,53 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = props => {
     }
 
     return (
-        <div>
-            <BaseModal {...props}>
-                <div className={contentContainer}>
-                    <h1>Create New Group</h1>
-                    <div className={inputRow}>
-                        <span>Group name</span>
-                        <input
-                            name='name'
-                            type="text" placeholder="Awesome group"
-                            onChange={setGroupData}
-                        />
+        <BaseModal {...props}>
+            <div className={contentContainer}>
+                <h1>Create New Group</h1>
+                <div className={inputRow}>
+                    <span>Group name</span>
+                    <input
+                        name='name'
+                        type="text" placeholder="Awesome group"
+                        onChange={setGroupData}
+                    />
+                </div>
+                <div className={inputRow}>
+                    <span>Group description</span>
+                    <input
+                        name='description'
+                        type="text"
+                        placeholder="My group description"
+                        onChange={setGroupData}
+                    />
+                </div>
+                <div className={inputRow}>
+                    <span>Group type</span>
+                    <div>
+                        <input className={radioInput} type="radio" id="public" name="type" value="public" onChange={setGroupData} />
+                        <label htmlFor="public">Project</label>
                     </div>
-                    <div className={inputRow}>
-                        <span>Group description</span>
-                        <input
-                            name='description'
-                            type="text"
-                            placeholder="My group description"
-                            onChange={setGroupData}
-                        />
-                    </div>
-                    <div className={inputRow}>
-                        <span>Group type</span>
-                        <div>
-                            <input className={radioInput} type="radio" id="public" name="type" value="public" onChange={setGroupData} />
-                            <label htmlFor="public">Project</label>
-                        </div>
-                        <div>
-                            <input className={radioInput} type="radio" id="private" name="type" value="private" onChange={setGroupData} />
-                            <label htmlFor="private">Study</label>
-                        </div>
-                    </div>
-                    <div className={modalActions}>
-                        <button
-                            className={`${actionButton} ${createButton} ${group?.name && group?.description && group?.type ? '' : 'disabled'}`}
-                            onClick={handleGroupCreateClick}
-                        >
-                            Create Group
-                        </button>
-                        <button
-                            className={`${actionButton} ${cancelButton}`}
-                            onClick={handleClose}
-                        >
-                            Cancel
-                        </button>
+                    <div>
+                        <input className={radioInput} type="radio" id="private" name="type" value="private" onChange={setGroupData} />
+                        <label htmlFor="private">Study</label>
                     </div>
                 </div>
-            </BaseModal>
-        </div>
+                <div className={modalActions}>
+                    <button
+                        className={`${actionButton} ${createButton} ${group?.name && group?.description && group?.type ? '' : 'disabled'}`}
+                        onClick={handleGroupCreateClick}
+                    >
+                        Create Group
+                    </button>
+                    <button
+                        className={`${actionButton} ${cancelButton}`}
+                        onClick={handleClose}
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </BaseModal>
     );
 };
 

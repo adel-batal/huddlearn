@@ -40,6 +40,16 @@ input {
     display: none;
 }
 
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: var(--white);
+    color: var(--orange);
+}
+
 :root {
     --yellow: #ffbe0b;
     --orange: #fb5607;

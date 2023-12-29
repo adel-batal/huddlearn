@@ -8,9 +8,11 @@ import CreateGroupModal from './components/Modals/CreateGroupModal/CreateGroupMo
 import { Group as GroupType } from './types/types';
 import Group from './views/Group/Group';
 import axios from 'axios';
+import LoginModal from './components/Modals/LoginModal/LoginModal';
 function App() {
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [currentGroups, setCurrentGroups] = useState(groups);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const loggedInUser = {
     id: '1',
     name: 'John Doe',
@@ -57,11 +59,17 @@ function App() {
     if (!id) return
     console.log('Delete group with id:', id);
   }
+  const handleLogin = () => {
+    console.log('Login');
+  }
 
   return (
     <>
       <Router>
-        <Navbar openCreateGroupModal={() => setIsCreateGroupModalOpen(true)} loggedInUser={loggedInUser}/>
+        <Navbar
+          openCreateGroupModal={() => setIsCreateGroupModalOpen(true)}
+          openLoginModal={() => setIsLoginModalOpen(true)}
+          loggedInUser={null} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/groups" element={<Groups
@@ -76,6 +84,10 @@ function App() {
         </Routes>
       </Router>
       <CreateGroupModal onCreateGroup={handleCreateGroup} isOpen={isCreateGroupModalOpen} onClose={() => setIsCreateGroupModalOpen(false)} />
+      <LoginModal
+        onLogin={handleLogin}
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)} />
     </>
   )
 }
