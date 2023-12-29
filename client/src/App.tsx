@@ -26,7 +26,7 @@ function App() {
     try {
       const response = await axios.get(`${API}/studygroups`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+          Authorization: `Bearer ${localStorage.getItem('huddle.jwtToken')}`
         },
       });
       setCurrentGroups(response?.data?.studygroup ?? []);
@@ -53,7 +53,7 @@ function App() {
     try {
       axios.post(`${API}/studygroups/`, newGroup, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+          Authorization: `Bearer ${localStorage.getItem('huddle.jwtToken')}`
         },
       });
       setCurrentGroups([...currentGroups, { ...newGroup, id: currentGroups.length + 1 }]);
@@ -76,7 +76,7 @@ function App() {
     try {
       axios.put(`${API}/studygroups/${group.id}`, group, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+          Authorization: `Bearer ${localStorage.getItem('huddle.jwtToken')}`
         },
       });
       const groupToEdit = currentGroups.find(groupData => groupData.id === group.id);
@@ -111,7 +111,7 @@ function App() {
     try {
       await axios.delete(`${API}/studygroups/${id}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+          Authorization: `Bearer ${localStorage.getItem('huddle.jwtToken')}`
         },
       });
       setCurrentGroups(currentGroups.filter(group => group.id !== id));
